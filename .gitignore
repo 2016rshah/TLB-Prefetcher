@@ -1,7 +1,6 @@
 bin
 obj
 logs
-scripts
 *.bak
 *.txt
 prefetcher/l2c_prefetcher.cc
