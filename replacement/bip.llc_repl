@@ -1,0 +1,57 @@
+#include "cache.h"
+
+uint32_t count;
+// initialize replacement state
+void CACHE::llc_initialize_replacement()
+{
+    count = 0;
+}
+
+// find replacement victim
+uint32_t CACHE::llc_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t ip, uint64_t full_addr, uint32_t type)
+{   
+    uint32_t way;
+    // baseline LRU
+    for (way=0; way<NUM_WAY; way++) {
+        if (block[set][way].valid == false) {
+            break;
+        }
+    }
+
+    // LRU victim
+    if (way == NUM_WAY) {
+        for (way=0; way<NUM_WAY; way++) {
+            if (block[set][way].lru == NUM_WAY-1) {
+                break;
+            }
+        }
+    }
+    return way;
+}
+
+// called on every cache hit and cache fill
+void CACHE::llc_update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t ip, uint64_t victim_addr, uint32_t type, uint8_t hit, uint64_t latency, uint64_t effective_latency)
+{
+    if (type == WRITEBACK)
+        return;
+
+    count++;
+    // update lru replacement state
+    for (uint32_t i=0; i<NUM_WAY; i++) {
+        if (block[set][i].lru < block[set][way].lru) {
+            block[set][i].lru++;
+        }
+    }
+
+    // Every 32nd instruction we want to do this
+    if (count % 8 == 0) {
+        block[set][way].lru = 0; // promote to the MRU position
+    } else {
+        block[set][way].lru = NUM_WAY-1; // promote to the LRU position  
+    }
+}
+
+void CACHE::llc_replacement_final_stats()
+{
+
+}

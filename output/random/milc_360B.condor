@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.milc_360B.OUT
+error=CONDOR.milc_360B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/random
+executable=output/random/milc_360B.sh
+queue

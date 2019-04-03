@@ -1,0 +1,178 @@
+#include "cache.h"
+#include "ooo_cpu.h"
+#include <fstream>
+#include <map>
+#include <queue>
+#include <sstream>
+#include <cstdint>
+
+using namespace std;
+
+// the trace file of cache accesses
+ifstream trace_file;
+
+map<uint64_t, queue <uint64_t>> opt;
+uint64_t count = 0;
+
+/* returns the trace name, with .txt appended */
+char *get_trace_name() {
+    int i;
+    int len = strlen(ooo_cpu[0].trace_string);
+    for (i = len-1; i >= 0 && ooo_cpu[0].trace_string[i] != '/'; i--) ;
+    char *result = new char[len-i-6];
+    memcpy(result, &(ooo_cpu[0].trace_string[i+1]), len-i-10);
+    strcpy(result+len-i-10, ".txt");
+    return result;
+}
+
+/* found this code from: http://jsteemann.github.io/blog/2016/06/02/fastest-string-to-uint64-conversion-method*/
+
+inline uint64_t convert(std::string const& value) {
+  uint64_t result = 0;
+  char const* p = value.c_str();
+  char const* q = p + value.size();
+  while (p < q) {
+    result *= 10;
+    result += *(p++) - '0';
+  }
+  return result;
+}
+
+void sanity_check() {
+    for (auto const& x : opt)
+    {
+        std::cout << x.first  // string (key)
+                  << ':';
+        queue<uint64_t> q = x.second;
+        while (!q.empty()) {
+            cout << q.front() << " ";
+            q.pop();
+        }
+        cout << endl;
+    }
+}
+
+/* initialize cache replacement state */
+void CACHE::llc_initialize_replacement()
+{
+    cout << "initializing OPT simulator ..." << endl;
+
+    /* open the cache reference trace file */
+    char *trace = get_trace_name();
+    const char *base = "/u/matthewp/traces/";
+    char *filename = new char[strlen(base)+strlen(trace)+1];
+    strcpy(filename, base);
+    strcpy(&(filename[strlen(base)]), trace);
+    delete trace;
+    cout << "reading cache references from: " << filename << endl;
+    trace_file = ifstream(filename);
+
+    // if (trace_file.is_open()) {
+    //     cout << trace_file.rdbuf();
+    // }
+    // put your own initialization code here
+    string str;
+    uint64_t index = 0;
+
+    // We go through each line and convert it to a number
+    // We bit shift it right 6 for the block
+    // We add the new cache line to the hashmap of queues
+    while (getline(trace_file, str)) {
+        uint64_t num;
+        istringstream iss(str);
+        iss >> num;
+        // cout << num << "\n";
+        uint64_t block = (num >> 6);
+        // If the hashmap does not have this number
+        if (opt.find(block) == opt.end()) {
+            queue <uint64_t> indices;
+            indices.push(index++);
+            opt.insert(make_pair(block, indices));
+        } else {
+            // In the case that that hashmap does have this number
+            queue <uint64_t> &q = opt.find(block)->second;
+            q.push(index++);
+        }
+    }
+
+
+    // Sanity Check
+    // for (auto const& x : opt)
+    // {
+    //     std::cout << x.first  // string (key)
+    //               << ':';
+    //     queue<int> q = x.second;
+    //     while (!q.empty()) {
+    //         cout << q.front() << " ";
+    //         q.pop();
+    //     }
+    //     cout << endl;
+    // }
+
+}
+
+/* find a cache block to evict
+ * return value should be 0 ~ 15 (corresponds to # of ways in cache)
+ * current_set: an array of BLOCK, of size 16 */
+uint32_t CACHE::llc_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t pc, uint64_t full_addr, uint32_t type)
+{
+    /* don't modify this code or put anything above it;
+     * if there's an invalid block, we don't need to evict any valid ones */
+    for (int way = 0; way < LLC_WAY; way++) {
+       // cout << "address: " << current_set[way].address << "\n";
+       // cout << "full address: " << (full_addr >> 6) << "\n";
+        if (current_set[way].valid == false) {
+            return way;
+        }
+    }
+
+    // your eviction policy goes here
+    // Keep track of the maximum way and position
+    uint64_t max_way = 0;
+    uint64_t max_pos = 0;
+
+    for (int way = 0; way < LLC_WAY; way++) {
+        auto block_addr = current_set[way].address;
+        queue <uint64_t> &q = opt.find(block_addr)->second;
+        while (!q.empty() && q.front() < count) {
+            // cout << "we are POPPIN: " << q.front() << endl;
+            q.pop();
+        }
+    }
+
+    for (int way = 0; way < LLC_WAY; way++) {
+        auto block_addr = current_set[way].address;
+        queue <uint64_t> &q = opt.find(block_addr)->second;
+        if (q.empty()) {
+            max_way = way;
+            return max_way;
+        }
+        if (q.front() > max_pos) {
+            max_way = way;
+            max_pos = q.front();
+        }
+    }
+    return max_way;
+}
+
+/* called on every cache hit and cache fill */
+void CACHE::llc_update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t pc, uint64_t victim_addr, uint32_t type, uint8_t hit, uint64_t latency, uint64_t effective_latency)
+{
+    // your code goes here
+    //cout << "PC: " << pc << " Address: " << full_addr << " Count: " << count << endl;
+    if (type == WRITEBACK) {
+        return;
+    }
+    count++;
+
+}
+
+/* called at the end of the simulation */
+void CACHE::llc_replacement_final_stats()
+{
+    // close the trace file
+    trace_file.close();
+
+    // your code goes here
+
+}

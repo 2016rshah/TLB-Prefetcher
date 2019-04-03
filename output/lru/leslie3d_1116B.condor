@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.leslie3d_1116B.OUT
+error=CONDOR.leslie3d_1116B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/lru
+executable=output/lru/leslie3d_1116B.sh
+queue

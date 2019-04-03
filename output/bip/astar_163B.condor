@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.astar_163B.OUT
+error=CONDOR.astar_163B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/bip
+executable=output/bip/astar_163B.sh
+queue

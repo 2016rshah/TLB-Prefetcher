@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.omnetpp_340B.OUT
+error=CONDOR.omnetpp_340B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/simulate_opt
+executable=output/simulate_opt/omnetpp_340B.sh
+queue

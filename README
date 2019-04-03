@@ -1,0 +1,84 @@
+ChampSim Workflow
+-----------------
+Once you've finished coding a replacement policy, you will build it. Building your replacement
+policy produces an executable which can be run. Editing your replacement policy will require
+you to build again. Once you have an executable for your policy, you can run it. Running it will
+produce some output which you can analyze.
+
+Building Your Replacement Policy
+--------------------------------
+To build a replacement policy, use the following command,
+
+$./build.sh my_policy
+
+where my_policy is a replacement policy (replacement/my_policy.llc_repl).
+
+You only have to build your policy after you edit its source code.
+
+Running Your Replacement Policy
+-------------------------------
+There are two ways to run your replacement policy, run.sh and run_cluster.sh.
+
+run.sh will simulate a small amount of instructions locally, and should only be used for testing
+purposes, not for the results you report. Output files will be produced in output/.
+
+run_cluster.sh will simulate your policy on a larger amount of instructions (100 million) on the
+department cluster, meaning it will be much faster than simulating on your local machine.
+Output files will be produced in a subdirectory of output/ so that you can avoid overwriting
+output files of other policies.
+
+Both scripts have similar usages:
+
+$./run.sh my_policy
+$./run_cluster.sh my_policy
+
+Using the Cluster
+-----------------
+After submitting jobs to the cluster using ./run_cluster.sh, you may want to check up on your
+jobs, or even remove them if you think something may be broken.
+
+To check your jobs use the following command,
+
+$/lusr/opt/condor/bin/condor_q
+
+To remove jobs use the following command,
+
+$/lusr/opt/condor/bin/condor_rm utcsid
+or
+$/lusr/opt/condor/bin/condor_rm job_number
+
+Printing Results
+----------------
+You can analyze the results by yourself if you like, or use the given script,
+
+$./print_results.py my_policy
+
+which will print MPKI and IPC for the given policy.
+
+Tips
+----
+You must be logged into the streetpizza UTCS lab machine in order to submit your code to the 
+cluster to run (ssh utcsid@streetpizza.cs.utexas.edu). Disclaimer: you should avoid submitting 
+useless or bugged code to the cluster, as it is a public resource. In order to test your code 
+before submitting it, you should use the run.sh script.
+
+If your text editor of choice doesn't seem to recognize the .llc_repl files as C++ code,
+you can change your settings to use C++ syntax.
+    For vim, you need to add this line to you .vimrc file:
+        au BufNewFile,BufReadPost *.llc_repl set syntax=cpp
+
+The base code for simulating OPT already opens the file containing all cache references for you.
+The variable "trace_file" will let you read the file easily whenever you need to.
+
+To read the next full address in the file, this code snippet will be helpful:
+    uint64_t address;
+    trace_file >> address;
+
+When comparing addresses, make sure you are using the block address, not the full address.
+If you don't know the difference, feel free to post on Piazza or look it up online.
+
+inc/cache.h contains some helpful constants that you should use in your code.
+inc/block.h contains the BLOCK struct, which will be useful in completing llc_find_victim().
+
+Each cache access in trace_file corresponds to a call to llc_update_replacement.
+

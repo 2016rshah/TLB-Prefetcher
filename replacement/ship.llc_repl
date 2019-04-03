@@ -1,0 +1,81 @@
+#include "cache.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <map>
+
+map<uint64_t, uint64_t> shct;
+int outcomes[LLC_SET][LLC_WAY];
+
+// initialize replacement state
+void CACHE::llc_initialize_replacement()
+{
+
+}
+
+// find replacement victim
+uint32_t CACHE::llc_find_victim(uint32_t cpu, uint64_t instr_id, uint32_t set, const BLOCK *current_set, uint64_t pc, uint64_t full_addr, uint32_t type)
+{
+    /* don't modify this code or put anything above it;
+    * if there's an invalid block, we don't need to evict any valid ones */
+    for (int way = 0; way < LLC_WAY; way++) {
+       // cout << "address: " << current_set[way].address << "\n";
+       // cout << "full address: " << (full_addr >> 6) << "\n";
+        if (block[set][way].valid == false) {
+            return way;
+        }
+    }
+
+    // https://www.slideshare.net/PawanJoshi15/evaluating-the-staticrrip-cache-replacement-policy
+
+    // We come to this case if we have a miss
+    uint8_t loop = 1;
+    while (loop) {
+        for (int way = 0; way < LLC_WAY; way++) {
+            if (block[set][way].lru == 7) {
+               if (outcomes[set][way] == 0) {
+                    auto temp = shct.find(pc)->second;
+                    shct[pc] = (temp > 0) ? temp - 1 : temp;
+               }
+               return way;
+            }
+            auto rrpv = block[set][way].lru;
+            block[set][way].lru = (rrpv < 7) ? rrpv + 1 : rrpv;
+        }
+    }
+    return -1;
+}
+
+void CACHE::llc_update_replacement_state(uint32_t cpu, uint32_t set, uint32_t way, uint64_t full_addr, uint64_t pc, uint64_t victim_addr, uint32_t type, uint8_t hit, uint64_t latency, uint64_t effective_latency)
+{
+   if (type == WRITEBACK)
+        return;
+
+   // if we have a hit, we set the RRPV of the block to 0
+   // we update the hit one with a RRPV of 0
+   if (hit) {
+        outcomes[set][way] = 1;
+        if (shct.find(pc) == shct.end()) {
+            shct[pc] = 1;
+        } else {
+            auto result = shct.find(pc)->second;
+            shct[pc] = (result < 7) ? result + 1 : result;
+        }
+   } else {
+        if (shct.find(pc) == shct.end()) {
+            shct[pc] = 0;
+            block[set][way].lru = 6;
+        } else {
+            outcomes[set][way] = 0;
+            if (shct.find(pc)->second == 0) {
+                block[set][way].lru = 7;
+            } else {
+                block[set][way].lru = 6;
+            }
+        }
+   }
+}
+
+void CACHE::llc_replacement_final_stats()
+{
+
+}

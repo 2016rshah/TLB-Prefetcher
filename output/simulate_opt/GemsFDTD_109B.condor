@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.GemsFDTD_109B.OUT
+error=CONDOR.GemsFDTD_109B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/simulate_opt
+executable=output/simulate_opt/GemsFDTD_109B.sh
+queue

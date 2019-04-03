@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.gcc_13B.OUT
+error=CONDOR.gcc_13B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/bip
+executable=output/bip/gcc_13B.sh
+queue

@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.lbm_94B.OUT
+error=CONDOR.lbm_94B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/bip
+executable=output/bip/lbm_94B.sh
+queue

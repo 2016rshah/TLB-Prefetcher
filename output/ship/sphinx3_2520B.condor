@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.sphinx3_2520B.OUT
+error=CONDOR.sphinx3_2520B.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=output/ship
+executable=output/ship/sphinx3_2520B.sh
+queue
