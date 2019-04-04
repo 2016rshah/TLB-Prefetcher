@@ -8,7 +8,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Simulation parameters
-TRACE_DIR="/u/matthewp/traces"
+TRACE_DIR="/scratch/cluster/akanksha/CRCRealTraces"
 WARM_INS=0
 SIM_INS=10
 CACHE=${1}
