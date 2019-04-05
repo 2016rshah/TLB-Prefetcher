@@ -112,8 +112,8 @@ void CACHE::handle_fill()
                 l1d_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
             if  (cache_type == IS_L2C)
                 l2c_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
-			
-			// TODO: add if statement for tlb prefetching 
+
+			// TODO: add if statement for tlb prefetching
             // update replacement policy
             if (cache_type == IS_LLC) {
                 llc_update_replacement_state(fill_cpu, set, way, MSHR.entry[mshr_index].full_addr, MSHR.entry[mshr_index].ip, block[set][way].full_addr, MSHR.entry[mshr_index].type, 0, MSHR.entry[mshr_index].latency, MSHR.entry[mshr_index].effective_latency);
@@ -422,9 +422,6 @@ void CACHE::handle_read()
             uint32_t set = get_set(RQ.entry[index].address);
             int way = check_hit(&RQ.entry[index]);
 
-            if (cache_type == IS_DTLB || cache_type == IS_STLB) {
-                way = 0;
-            }
             if (way >= 0) { // read hit
 
                 if (cache_type == IS_ITLB) {

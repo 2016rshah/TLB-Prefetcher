@@ -1,6 +1,6 @@
 #include "cache.h"
 
-void CACHE::tlb_prefetcher_initialize() 
+void CACHE::tlb_prefetcher_initialize()
 {
 
 }
