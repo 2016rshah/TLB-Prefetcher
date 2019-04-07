@@ -1,0 +1,10 @@
+astar_163B
+cactusADM_734B
+GemsFDTD_109B
+gcc_13B
+lbm_94B
+leslie3d_1116B
+libquantum_1210B
+milc_360B
+omnetpp_340B
+sphinx3_2520B
