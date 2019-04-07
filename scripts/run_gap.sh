@@ -17,7 +17,7 @@ cd $CHAMP_PATH
 
 WARM_INS=0
 INS=1000
-OUTPUT_DIR="/scratch/cluster/matthewp/$SIGNATURE/${PREFETCH}"
+OUTPUT_DIR="${CHAMP_PATH}/output/$SIGNATURE/${PREFETCH}"
 
 # ensure output dir exists
 if test ! -d $OUTPUT_DIR; then
@@ -40,4 +40,4 @@ do
     
     # submit the condor file
     /lusr/opt/condor/bin/condor_submit $CONDOR_FILE
-done < $CHAMP_PATH/sim_list/gap_list.txt
+done < $CHAMP_PATH/sim_lists/gap15/traces.txt
