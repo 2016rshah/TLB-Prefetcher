@@ -159,7 +159,9 @@ void finish_warmup()
     // reset core latency
     SCHEDULING_LATENCY = 6;
     EXEC_LATENCY = 1;
+    // PAGE_TABLE_LATENCY = 100;
     PAGE_TABLE_LATENCY = 0;
+    // SWAP_LATENCY = 100000;
     SWAP_LATENCY = 0;
 
     cout << endl;

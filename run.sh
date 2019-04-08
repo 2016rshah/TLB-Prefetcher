@@ -8,7 +8,7 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Simulation parameters
-TRACE_DIR="/scratch/cluster/akanksha/CRCRealTraces"
+TRACE_DIR="/u/kbaldauf/Documents/comp_arch_research/TLB-Prefetcher/traces"
 WARM_INS=0
 SIM_INS=10
 CACHE=${1}
