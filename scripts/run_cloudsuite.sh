@@ -18,7 +18,7 @@ cd $CHAMP_PATH
 WARM_INS=0
 INS=100
 
-OUTPUT_DIR="output/$SIGNATURE/${PREFETCH}"
+OUTPUT_DIR="${CHAMP_PATH}/output/$SIGNATURE/${PREFETCH}"
 
 # ensure output dir exists
 if test ! -d $OUTPUT_DIR; then
