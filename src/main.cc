@@ -829,6 +829,10 @@ int main(int argc, char** argv)
                 record_roi_stats(i, &ooo_cpu[i].L2C);
                 record_roi_stats(i, &uncore.LLC);
 
+                record_roi_stats(i, &ooo_cpu[i].DTLB);
+                record_roi_stats(i, &ooo_cpu[i].STLB);
+
+
                 all_simulation_complete++;
             }
 
