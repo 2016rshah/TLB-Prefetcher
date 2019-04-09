@@ -1,6 +1,7 @@
 bin
 obj
 logs
+*.condor
 *.bak
 prefetcher/l2c_prefetcher.cc
 replacement/llc_replacement.cc

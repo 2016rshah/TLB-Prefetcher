@@ -2,7 +2,7 @@
 *** ChampSim Multicore Out-of-Order Simulator ***
 
 Warmup Instructions: 0
-Simulation Instructions: 1000000000
+Simulation Instructions: 100000000000
 Number of CPUs: 1
 LLC sets: 2048
 LLC ways: 16

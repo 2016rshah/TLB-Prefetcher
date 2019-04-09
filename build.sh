@@ -8,10 +8,11 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Build the executable (with perceptron BP, no prefetchers, 1 core)
-BRANCH="perceptron"   # branch/*.bpred
+BRANCH="perceptron"  # branch/*.bpred
 L1D_PREFETCHER="no"   # prefetcher/*.l1d_pref
 L2C_PREFETCHER="no"   # prefetcher/*.l2c_pref
-LLC_REPLACEMENT=${1}  # replacement/*.llc_repl
+LLC_REPLACEMENT="lru"  # replacement/*.llc_repl
+TLB_PREFETCH="${1}"
 NUM_CORE=1            # tested up to 8-core system
 
 ############## Some useful macros ###############

@@ -11,7 +11,7 @@ CORES=1
 
 # build champsim
 cd $CHAMP_PATH
-./build_champsim.sh ${BRANCH} ${L1P} ${CACHE_PREFETCH} ${CACHE} ${CORES}
+#./build.sh ${BRANCH} ${L1P} ${CACHE_PREFETCH} ${CACHE} ${CORES}
 
 WARM_INS=0
 INS=1000

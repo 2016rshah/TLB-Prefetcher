@@ -1,0 +1,13 @@
++Group="GRAD"
++Project="ARCHITECTURE"
++ProjectDescription="Micro-architectural simulation"
+universe=vanilla
+getenv=true
+Rank=Memory
+notification=Error
+output=CONDOR.tc.OUT
+error=CONDOR.tc.ERR
+notify_user=matthewp@cs.utexas.edu
+initialdir=/u/kbaldauf/Documents/comp_arch_research/TLB-Prefetcher/scripts/../output/gap-g17/no
+executable=/u/kbaldauf/Documents/comp_arch_research/TLB-Prefetcher/scripts/../output/gap-g17/no/tc.sh
+queue
