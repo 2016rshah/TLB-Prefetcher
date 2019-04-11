@@ -3,7 +3,7 @@
 # Check that args are correct
 if [ "$#" -ne 1 ]; then
     echo "Incorrect # of arguments: expected cache replacement policy"
-    echo "Usage: ./build.sh name_of_policy"
+    echo "Usage: ./build.sh num_cores"
     exit
 fi
 
@@ -12,8 +12,8 @@ BRANCH="perceptron"  # branch/*.bpred
 L1D_PREFETCHER="no"   # prefetcher/*.l1d_pref
 L2C_PREFETCHER="no"   # prefetcher/*.l2c_pref
 LLC_REPLACEMENT="lru"  # replacement/*.llc_repl
-TLB_PREFETCH="${1}"
-NUM_CORE=1            # tested up to 8-core system
+#TLB_PREFETCH="${1}"
+NUM_CORE=${1}            # tested up to 8-core system
 
 ############## Some useful macros ###############
 BOLD=$(tput bold)
