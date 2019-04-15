@@ -25,8 +25,8 @@ extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
 #define ITLB_LATENCY 1
 
 // DATA TLB
-#define DTLB_SET 16
-#define DTLB_WAY 4
+#define DTLB_SET 160000
+#define DTLB_WAY 32
 #define DTLB_RQ_SIZE 16
 #define DTLB_WQ_SIZE 16
 #define DTLB_PQ_SIZE 0
@@ -34,8 +34,8 @@ extern uint32_t PAGE_TABLE_LATENCY, SWAP_LATENCY;
 #define DTLB_LATENCY 1
 
 // SECOND LEVEL TLB
-#define STLB_SET 128
-#define STLB_WAY 12
+#define STLB_SET 128000
+#define STLB_WAY 32
 #define STLB_RQ_SIZE 32
 #define STLB_WQ_SIZE 32
 #define STLB_PQ_SIZE 0
