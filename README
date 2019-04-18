@@ -82,3 +82,15 @@ inc/block.h contains the BLOCK struct, which will be useful in completing llc_fi
 
 Each cache access in trace_file corresponds to a call to llc_update_replacement.
 
+TLB Prefetching
+--------------------
+
+Install info gain library for analyzing different localizations,
+
+	python3 -m pip install --user info_gain
+
+see library information at: https://pypi.org/project/info-gain/
+
+
+To model the absolute upper bound for a TLB prefetcher,
+change the PAGE_TABLE_LATENCY to 0 in src/main.cc 

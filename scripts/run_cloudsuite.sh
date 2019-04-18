@@ -19,6 +19,7 @@ cd $CHAMP_PATH
 WARM_INS=0
 INS=100
 
+#OUTPUT_DIR="/scratch/cluster/kbaldauf/output/$SIGNATURE/${PREFETCH}"
 OUTPUT_DIR="${CHAMP_PATH}/output/$SIGNATURE/${PREFETCH}"
 
 # ensure output dir exists

@@ -855,7 +855,11 @@ int CACHE::check_hit(PACKET *packet)
     uint32_t set = get_set(packet->address);
     int match_way = -1;
 	
-	// if (cache_type == IS_DTLB || cache_type == IS_STLB) { return 0;}
+	/*if (cache_type == IS_DTLB || cache_type == IS_STLB) {
+		uint64_t page_mask = ~(1<<LOG2_PAGE_SIZE);
+		cout << "page addr:" << (packet->address & page_mask) << endl;
+	}*/
+
     if (NUM_SET < set) {
         cerr << "[" << NAME << "_ERROR] " << __func__ << " invalid set index: " << set << " NUM_SET: " << NUM_SET;
         cerr << " address: " << hex << packet->address << " full_addr: " << packet->full_addr << dec;

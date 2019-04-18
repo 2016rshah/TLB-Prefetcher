@@ -160,7 +160,8 @@ void finish_warmup()
     SCHEDULING_LATENCY = 6;
     EXEC_LATENCY = 1;
     PAGE_TABLE_LATENCY = 100;
-    SWAP_LATENCY = 100000;
+    // PAGE_TABLE_LATENCY = 0;
+	SWAP_LATENCY = 100000;
 
     cout << endl;
     for (uint32_t i=0; i<NUM_CPUS; i++) {
