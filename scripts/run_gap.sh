@@ -1,17 +1,23 @@
 #!/bin/bash
+
+if [ "$#" -ne 1 ]; then
+	echo "Incorrect # of arguments: expected tlb prefetcher policy"
+	echo "Usage: ./run_gap.sh tlb_prefetcher"
+	exit
+fi
+
 GPU=false
 
 CHAMP_PATH="$(pwd)/.."
 BRANCH="perceptron"
 L1P="no"
-CACHE_PREFETCH="no"
-#TLB_PREFETCH="${1}"
+L2P="no"
+TLB_PREFETCHER="${1}"
 CACHE="lru"
 CORES=1
 
 # build champsim
 cd $CHAMP_PATH
-#./build.sh ${BRANCH} ${L1P} ${CACHE_PREFETCH} ${CACHE} ${CORES}
 
 WARM_INS=0
 INS=1000
@@ -19,7 +25,7 @@ INS=1000
 for SUITE in "gap-g15" "gap-g17" "gap-g20" "gap-g25"
 do 
 	TRACE_PATH="/scratch/cluster/matthewp/$SUITE"
-	OUTPUT_DIR="${CHAMP_PATH}/output/$SUITE/${CACHE_PREFETCH}"
+	OUTPUT_DIR="${CHAMP_PATH}/output/$SUITE/${TLB_PREFETCHER}"
 	if test ! -d $OUTPUT_DIR; then
 		mkdir -p $OUTPUT_DIR
 	fi 
@@ -32,7 +38,7 @@ do
     
     	# create script file
     	echo "#!/bin/bash" > $SCRIPT_FILE
-    	echo "$CHAMP_PATH/scripts/run_champsim.sh ${BRANCH}-${L1P}-${CACHE_PREFETCH}-${CACHE}-${CORES}core $WARM_INS $INS $BENCHMARK $OUTPUT_DIR $TRACE_PATH" >> $SCRIPT_FILE
+    	echo "$CHAMP_PATH/scripts/run_champsim.sh ${BRANCH}-${L1P}-${L2P}-${TLB_PREFETCHER}-${CACHE}-${CORES}core $WARM_INS $INS $BENCHMARK $OUTPUT_DIR $TRACE_PATH" >> $SCRIPT_FILE
     	chmod +x $SCRIPT_FILE
 
     	# create condor file

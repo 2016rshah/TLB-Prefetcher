@@ -2,7 +2,7 @@
 
 # Check that args are correct
 if [ "$#" -ne 1 ]; then
-    echo "Incorrect # of arguments: expected cache replacement policy"
+    echo "Incorrect # of arguments: expected tlb_prefetcher policy"
     echo "Usage: ./run.sh name_of_policy"
     exit
 fi
@@ -11,9 +11,10 @@ fi
 TRACE_DIR="/u/kbaldauf/Documents/comp_arch_research/TLB-Prefetcher/traces"
 WARM_INS=0
 SIM_INS=10
-CACHE=${1}
+TLB_PREFETCHER=${1}
+CACHE="lru"
 
-BINARY="bin/perceptron-no-no-${CACHE}-1core"
+BINARY="bin/perceptron-no-no-${TLB_PREFETCHER}-lru-1core"
 
 # Run our cache replacement policy on each trace
 echo "Running ${CACHE} on astar_163B ..."
