@@ -485,7 +485,7 @@ void CACHE::handle_read()
 
                 // update prefetch stats and reset prefetch bit
                 if (block[set][way].prefetch) {
-                    l2c_notify_useful(block[set][way].full_addr, RQ.entry[index].ip);
+                    // TODO: ? l2c_notify_useful(block[set][way].full_addr, RQ.entry[index].ip);
                     pf_useful++;
                     block[set][way].prefetch = 0;
                 }
@@ -671,6 +671,7 @@ void CACHE::handle_prefetch()
                     update_replacement_state(prefetch_cpu, set, way, block[set][way].full_addr, PQ.entry[index].ip, 0, PQ.entry[index].type, 1);
                     assert(!fake_hit);
                 }
+				// TODO: does this need to be fixed for tlb? 
 
                 // COLLECT STATS
                 sim_hit[prefetch_cpu][PQ.entry[index].type]++;
@@ -866,7 +867,7 @@ int CACHE::check_hit(PACKET *packet)
     int match_way = -1;
 	
 	/*if (cache_type == IS_DTLB || cache_type == IS_STLB) {
-		uint64_t page_mask = ~(1<<LOG2_PAGE_SIZE);
+		uint64_t page_addr = (packet->address >> LOG2_PAGE_SIZE) << LOG2_PAGE_SIZE;
 		cout << "page addr:" << (packet->address & page_mask) << endl;
 	}*/
 
