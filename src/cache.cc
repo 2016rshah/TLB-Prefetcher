@@ -114,7 +114,7 @@ void CACHE::handle_fill()
                 l2c_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
 
 			// TODO: add if statement for tlb prefetching
-			if (cache_type == IS_DTLB) 
+			if (cache_type == IS_STLB) 
 				tlb_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
 
             // update replacement policy
@@ -369,7 +369,7 @@ void CACHE::handle_writeback()
                     else if (cache_type == IS_L2C)
                         l2c_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
 					// TODO: do we check for dtlb and stlb? 
-					else if (cache_type == IS_DTLB)
+					else if (cache_type == IS_STLB)
 						tlb_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
 
                     // update replacement policy
@@ -458,7 +458,7 @@ void CACHE::handle_read()
                         l1d_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
                     else if (cache_type == IS_L2C)
                         l2c_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
-					else if (cache_type == IS_DTLB) 
+					else if (cache_type == IS_STLB) 
 						tlb_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
                 }
 				// TODO: setup tlb prefetcher
@@ -627,7 +627,7 @@ void CACHE::handle_read()
                             l1d_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
                         if (cache_type == IS_L2C)
                             l2c_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
-						if (cache_type == IS_DTLB) 
+						if (cache_type == IS_STLB) 
 							tlb_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
                     }
 					// TODO: add TLB prefetcher operate
