@@ -459,7 +459,7 @@ void CACHE::handle_read()
                     else if (cache_type == IS_L2C)
                         l2c_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
 					else if (cache_type == IS_STLB) 
-						tlb_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
+					  tlb_prefetcher_operate(read_cpu, block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
                 }
 				// TODO: setup tlb prefetcher
                 // update replacement policy
@@ -628,7 +628,7 @@ void CACHE::handle_read()
                         if (cache_type == IS_L2C)
                             l2c_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
 						if (cache_type == IS_STLB) 
-							tlb_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
+						  tlb_prefetcher_operate(read_cpu, RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
                     }
 					// TODO: add TLB prefetcher operate
                     MISS[RQ.entry[index].type]++;
