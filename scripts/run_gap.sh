@@ -22,7 +22,7 @@ cd $CHAMP_PATH
 WARM_INS=0
 INS=1000
 
-for SUITE in "gap-g15" "gap-g17" "gap-g20" "gap-g25"
+for SUITE in "gap-g15" "gap-g17" "gap-g20" "gap-g22"
 do 
 	TRACE_PATH="/scratch/cluster/matthewp/$SUITE"
 	OUTPUT_DIR="${CHAMP_PATH}/output/$SUITE/${TLB_PREFETCHER}"

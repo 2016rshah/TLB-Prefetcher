@@ -1,5 +1,7 @@
 #include "cache.h"
 #include "delta.h"
+#include "champsim.h"
+#include "block.h"
 #include <vector>
 
 uint64_t S = 2;
@@ -10,40 +12,37 @@ void CACHE::tlb_prefetcher_initialize()
 
 }
 
+PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
+   PACKET pf_packet;
+   pf_packet.fill_level = FILL_STLB;
+   pf_packet.cpu = cpu;
+   pf_packet.address = pf_addr >> LOG2_BLOCK_SIZE;
+   pf_packet.full_addr = pf_addr;
+   pf_packet.ip = 0; // prefetch gets dummy ip of zero
+   pf_packet.type = PREFETCH;
+   pf_packet.event_cycle = current_core_cycle[cpu]; // ?
+   return pf_packet;
+}
+
 // this is the trigger for a prefetcher
 void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type)
 {
-	// TODO: is the addr here the v addr? 
 	std::vector<uint64_t> predicted = delta.find_prefetch_addrs(addr);
-	// TODO: prefetch tlb
-	// for each prediction
-	//   probe cache
-	//   if already in cache continue
-	//   else
-	//     va_to_pa
-	//     set = get_set(prediction)
-	//     way = find_victim(cpu, instruction_id, set, *current_set, ip, prediction?, type)
-	//     fill_cache(set, way, packet_of(prediction))
+	uint64_t instr_id = 0; // set instruction id to zero because only used for debugging 
+	for (uint64_t prediction : predicted) {
+	  PACKET packet = make_packet(cpu, prediction);
+	  uint32_t set = get_set(packet.address);
+	  int way = check_hit(&packet);
+	  
+	  if(way != -1) {
+	    continue;
+	  }
+	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address);
+
+	  way = find_victim(cpu, instr_id, set, block[set], 0, packet.full_addr, PREFETCH);
+	  fill_cache(set, way, &packet);
+	}
 }
-
-/*
-make_packet() {
-   PACKET pf_packet;
-   pf_packet.fill_level = fill_level; // we can add a fill level for TLB? Or find a default null value
-   pf_packet.cpu = cpu;
-   //pf_packet.data_index = LQ.entry[lq_index].data_index;
-   //pf_packet.lq_index = lq_index;
-   pf_packet.address = pf_addr >> LOG2_BLOCK_SIZE;
-   pf_packet.full_addr = pf_addr;
-   //pf_packet.instr_id = LQ.entry[lq_index].instr_id;
-   //pf_packet.rob_index = LQ.entry[lq_index].rob_index;
-   pf_packet.ip = ip;
-   pf_packet.type = PREFETCH;
-   pf_packet.event_cycle = current_core_cycle[cpu];
-}
-
-
- */
 
 // when a requested line is filled (may cause eviction)  
 void CACHE::tlb_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr)
