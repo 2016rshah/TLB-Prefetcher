@@ -14,7 +14,7 @@ void CACHE::tlb_prefetcher_initialize()
 
 PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
    PACKET pf_packet;
-   pf_packet.fill_level = FILL_STLB;
+   pf_packet.fill_level = FILL_L2;
    pf_packet.cpu = cpu;
    pf_packet.address = pf_addr >> LOG2_BLOCK_SIZE;
    pf_packet.full_addr = pf_addr;
