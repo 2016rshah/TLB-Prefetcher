@@ -37,7 +37,7 @@ void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uin
 	  if(way != -1) {
 	    continue;
 	  }
-	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address);
+	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address, 1);
 		packet.data = pa >> LOG2_PAGE_SIZE; // ? 
 
 	  way = find_victim(cpu, instr_id, set, block[set], 0, packet.full_addr, PREFETCH);

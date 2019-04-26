@@ -522,7 +522,7 @@ void CACHE::handle_read()
                             // TODO: need to differentiate page table walk and actual swap
 
                             // emulate page table walk
-                            uint64_t pa = va_to_pa(read_cpu, RQ.entry[index].instr_id, RQ.entry[index].full_addr, RQ.entry[index].address);
+                            uint64_t pa = va_to_pa(read_cpu, RQ.entry[index].instr_id, RQ.entry[index].full_addr, RQ.entry[index].address, 0);
 
                             RQ.entry[index].data = pa >> LOG2_PAGE_SIZE;
                             RQ.entry[index].event_cycle = current_core_cycle[read_cpu];

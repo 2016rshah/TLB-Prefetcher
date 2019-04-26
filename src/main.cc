@@ -274,7 +274,7 @@ uint64_t rotr64 (uint64_t n, unsigned int c)
 }
 
 RANDOM champsim_rand(champsim_seed);
-uint64_t va_to_pa(uint32_t cpu, uint64_t instr_id, uint64_t va, uint64_t unique_vpage)
+uint64_t va_to_pa(uint32_t cpu, uint64_t instr_id, uint64_t va, uint64_t unique_vpage, uint32_t is_prefetch)
 {
 #ifdef SANITY_CHECK
     if (va == 0)
@@ -443,11 +443,13 @@ uint64_t va_to_pa(uint32_t cpu, uint64_t instr_id, uint64_t va, uint64_t unique_
     cout << "[PAGE_TABLE] instr_id: " << instr_id << " vpage: " << hex << vpage;
     cout << " => ppage: " << (pa >> LOG2_PAGE_SIZE) << " vadress: " << unique_va << " paddress: " << pa << dec << endl; });
 
-    if (swap)
-        stall_cycle[cpu] = current_core_cycle[cpu] + SWAP_LATENCY;
-    else
-        stall_cycle[cpu] = current_core_cycle[cpu] + PAGE_TABLE_LATENCY;
+	if (!is_prefetch) {
+    	if (swap)
+        	stall_cycle[cpu] = current_core_cycle[cpu] + SWAP_LATENCY;
+    	else
+        	stall_cycle[cpu] = current_core_cycle[cpu] + PAGE_TABLE_LATENCY;
 
+	}
     //cout << "cpu: " << cpu << " allocated unique_vpage: " << hex << unique_vpage << " to ppage: " << ppage << dec << endl;
 
     return pa;

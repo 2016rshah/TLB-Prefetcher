@@ -5,7 +5,7 @@ void CACHE::tlb_prefetcher_initialize()
 
 }
 
-void CACHE::tlb_prefetcher_operate(uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type)
+void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type)
 {
 
 }
