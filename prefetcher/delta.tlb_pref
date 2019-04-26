@@ -20,7 +20,7 @@ PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
    pf_packet.full_addr = pf_addr;
    pf_packet.ip = 0; // prefetch gets dummy ip of zero
    pf_packet.type = PREFETCH;
-   pf_packet.event_cycle = current_core_cycle[cpu]; // ?
+   pf_packet.event_cycle = current_core_cycle[cpu]; 
    return pf_packet;
 }
 
@@ -38,6 +38,7 @@ void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uin
 	    continue;
 	  }
 	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address);
+		packet.data = pa >> LOG2_PAGE_SIZE; // ? 
 
 	  way = find_victim(cpu, instr_id, set, block[set], 0, packet.full_addr, PREFETCH);
 	  fill_cache(set, way, &packet);

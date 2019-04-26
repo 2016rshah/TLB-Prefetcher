@@ -71,6 +71,9 @@ class Delta {
 
 
 		void update_prev_predicted_distances() {
+			if (current_distance == 0) {
+				return; // if the page address matches, ignore
+			}
 			uint64_t size = d_table[previous_distance].size();
 			int exists_index = find_distance_in_prev();
 
