@@ -1,7 +1,11 @@
 #include "cache.h"
 #include "set.h"
+#include <iostream>
+#include <fstream>
 
+using namespace std;
 uint64_t l2pf_access = 0;
+ofstream v_addrs;
 
 void CACHE::handle_fill()
 {
@@ -790,12 +794,14 @@ void CACHE::handle_prefetch()
 
 void CACHE::operate()
 {
+    v_addrs.open("addrs.txt");
     handle_fill();
     handle_writeback();
     handle_read();
 
     if (PQ.occupancy && (RQ.occupancy == 0))
         handle_prefetch();
+    v_addrs.close();
 }
 
 uint32_t CACHE::get_set(uint64_t address)
@@ -877,6 +883,14 @@ int CACHE::check_hit(PACKET *packet)
         cerr << " event: " << packet->event_cycle << endl;
         assert(0);
     }
+
+    // if (v_addrs.is_open()){
+    //     v_addrs << packet->full_addr << "\n";
+    // } else{
+    //     cout << "There is an error\n" << endl;
+    // }
+    cout << packet->full_addr << endl;
+    
 
     // hit
     for (uint32_t way=0; way<NUM_WAY; way++) {
