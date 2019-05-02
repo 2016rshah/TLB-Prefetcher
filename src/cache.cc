@@ -3,7 +3,6 @@
 
 using namespace std;
 uint64_t l2pf_access = 0;
-ofstream v_addrs;
 
 void CACHE::handle_fill()
 {
