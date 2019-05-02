@@ -792,14 +792,12 @@ void CACHE::handle_prefetch()
 
 void CACHE::operate()
 {
-    v_addrs.open("addrs.txt");
     handle_fill();
     handle_writeback();
     handle_read();
 
     if (PQ.occupancy && (RQ.occupancy == 0))
         handle_prefetch();
-    v_addrs.close();
 }
 
 uint32_t CACHE::get_set(uint64_t address)
