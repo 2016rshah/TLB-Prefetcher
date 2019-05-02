@@ -1,7 +1,5 @@
 #include "cache.h"
 #include "set.h"
-#include <iostream>
-#include <fstream>
 
 using namespace std;
 uint64_t l2pf_access = 0;
@@ -118,7 +116,7 @@ void CACHE::handle_fill()
                 l2c_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
 
 			// TODO: add if statement for tlb prefetching
-			if (cache_type == IS_STLB) 
+			if (cache_type == IS_STLB)
 				tlb_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
 
             // update replacement policy
@@ -372,7 +370,7 @@ void CACHE::handle_writeback()
                         l1d_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
                     else if (cache_type == IS_L2C)
                         l2c_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
-					// TODO: do we check for dtlb and stlb? 
+					// TODO: do we check for dtlb and stlb?
 					else if (cache_type == IS_STLB)
 						tlb_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
 
@@ -431,9 +429,9 @@ void CACHE::handle_read()
             // access cache
             uint32_t set = get_set(RQ.entry[index].address);
             int way = check_hit(&RQ.entry[index]);
-			
+
             if (way >= 0) { // read hit
-				
+
                 if (cache_type == IS_ITLB) {
                     RQ.entry[index].instruction_pa = block[set][way].data;
                     if (PROCESSED.occupancy < PROCESSED.SIZE)
@@ -463,7 +461,7 @@ void CACHE::handle_read()
                         l1d_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
                     else if (cache_type == IS_L2C)
                         l2c_prefetcher_operate(block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
-					else if (cache_type == IS_STLB) 
+					else if (cache_type == IS_STLB)
 					  tlb_prefetcher_operate(read_cpu, block[set][way].full_addr, RQ.entry[index].ip, 1, RQ.entry[index].type);
                 }
 				// TODO: setup tlb prefetcher
@@ -632,7 +630,7 @@ void CACHE::handle_read()
                             l1d_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
                         if (cache_type == IS_L2C)
                             l2c_prefetcher_operate(RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
-						if (cache_type == IS_STLB) 
+						if (cache_type == IS_STLB)
 						  tlb_prefetcher_operate(read_cpu, RQ.entry[index].full_addr, RQ.entry[index].ip, 0, RQ.entry[index].type);
                     }
 					// TODO: add TLB prefetcher operate
@@ -676,7 +674,7 @@ void CACHE::handle_prefetch()
                     update_replacement_state(prefetch_cpu, set, way, block[set][way].full_addr, PQ.entry[index].ip, 0, PQ.entry[index].type, 1);
                     assert(!fake_hit);
                 }
-				// TODO: does this need to be fixed for tlb? 
+				// TODO: does this need to be fixed for tlb?
 
                 // COLLECT STATS
                 sim_hit[prefetch_cpu][PQ.entry[index].type]++;
@@ -886,8 +884,8 @@ int CACHE::check_hit(PACKET *packet)
     // } else{
     //     cout << "There is an error\n" << endl;
     // }
-    cout << packet->full_addr << endl;
-    
+   // cout << packet->full_addr << endl;
+
 
     // hit
     for (uint32_t way=0; way<NUM_WAY; way++) {

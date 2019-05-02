@@ -201,7 +201,7 @@ void finish_warmup()
         ooo_cpu[i].L2C.LATENCY  = L2C_LATENCY;
     }
     uncore.LLC.LATENCY = LLC_LATENCY;
-    cout << "Starting addresses:" << endl;
+    //cout << "Starting addresses:" << endl;
 }
 
 void print_deadlock(uint32_t i)
@@ -820,7 +820,7 @@ int main(int argc, char** argv)
             if (ooo_cpu[1].num_retired > 0)
                 warmup_complete[1] = 1;
             */
-            
+
             // simulation complete
             if ((all_warmup_complete > NUM_CPUS) && (simulation_complete[i] == 0) && (ooo_cpu[i].num_retired >= (ooo_cpu[i].begin_sim_instr + ooo_cpu[i].simulation_instructions))) {
                 simulation_complete[i] = 1;
@@ -839,7 +839,7 @@ int main(int argc, char** argv)
                 record_roi_stats(i, &ooo_cpu[i].DTLB);
                 record_roi_stats(i, &ooo_cpu[i].STLB);
 
-               
+
                 all_simulation_complete++;
             }
             if (all_simulation_complete == NUM_CPUS)
@@ -850,7 +850,7 @@ int main(int argc, char** argv)
         uncore.LLC.operate();
         uncore.DRAM.operate();
     }
-    cout << "Ending addresses" << endl;
+    //cout << "Ending addresses" << endl;
 #ifndef CRC2_COMPILE
     print_branch_stats();
 #endif
