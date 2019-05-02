@@ -20,3 +20,6 @@ BINARY="bin/perceptron-no-no-${TLB_PREFETCHER}-lru-1core"
 echo "Running ${CACHE} on astar_163B ..."
 (${BINARY} -warmup_instructions ${WARM_INS}000000 -simulation_instructions ${SIM_INS}000000 -hide_heartbeat -traces ${TRACE_DIR}/astar_163B.trace.gz) &> output/astar_163B.txt
 
+echo "Running ${CACHE} on libquantum_1210B ..."
+(${BINARY} -warmup_instructions ${WARM_INS}000000 -simulation_instructions ${SIM_INS}000000 -hide_heartbeat -traces ${TRACE_DIR}/libquantum_1210B.trace.gz) &> output/libquantum_1210B.txt
+

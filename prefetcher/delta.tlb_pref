@@ -7,6 +7,9 @@
 uint64_t S = 2;
 Delta delta(S);
 
+uint64_t num_redundant = 0;
+uint64_t total_prefetches = 0;
+
 void CACHE::tlb_prefetcher_initialize() 
 {
 
@@ -16,7 +19,7 @@ PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
    PACKET pf_packet;
    pf_packet.fill_level = FILL_L2;
    pf_packet.cpu = cpu;
-   pf_packet.address = pf_addr >> LOG2_BLOCK_SIZE;
+   pf_packet.address = pf_addr >> LOG2_PAGE_SIZE; // this gets rid of the lower 0s
    pf_packet.full_addr = pf_addr;
    pf_packet.ip = 0; // prefetch gets dummy ip of zero
    pf_packet.type = PREFETCH;
@@ -28,20 +31,24 @@ PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
 void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type)
 {
 	std::vector<uint64_t> predicted = delta.find_prefetch_addrs(addr);
-	uint64_t instr_id = 0; // set instruction id to zero because only used for debugging 
+	uint64_t instr_id = 0; // set instruction id to zero because only used for debugging
 	for (uint64_t prediction : predicted) {
 	  PACKET packet = make_packet(cpu, prediction);
 	  uint32_t set = get_set(packet.address);
 	  int way = check_hit(&packet);
-	  
+      total_prefetches++; 
+	 	// TODO: handle overflow for counters 
 	  if(way != -1) {
-	    continue;
+		num_redundant++; 
+	    continue; // redundant prefetches, we can look further in the stream if there are too many redundant prefetches
 	  }
-	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address, 1);
-		packet.data = pa >> LOG2_PAGE_SIZE; // ? 
+	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address, 1); // ?
+		packet.data = pa >> LOG2_PAGE_SIZE; // gets rid of the lower 0s  
 
 	  way = find_victim(cpu, instr_id, set, block[set], 0, packet.full_addr, PREFETCH);
-	  fill_cache(set, way, &packet);
+	  
+      pf_issued++; // TODO: update pf_requested if we end up using a prefetch queue
+      fill_cache(set, way, &packet);
 	}
 }
 
@@ -53,5 +60,7 @@ void CACHE::tlb_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way,
 
 void CACHE::tlb_prefetcher_final_stats()
 {
-
+	printf("\nTLB prefetcher final stats\n");
+	printf("\tredundant prefetches vs total calculated:\n");
+	printf("\t%ld of %ld\n", num_redundant, total_prefetches); 	
 }

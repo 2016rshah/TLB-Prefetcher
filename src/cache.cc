@@ -427,9 +427,9 @@ void CACHE::handle_read()
             // access cache
             uint32_t set = get_set(RQ.entry[index].address);
             int way = check_hit(&RQ.entry[index]);
-
+			
             if (way >= 0) { // read hit
-
+				
                 if (cache_type == IS_ITLB) {
                     RQ.entry[index].instruction_pa = block[set][way].data;
                     if (PROCESSED.occupancy < PROCESSED.SIZE)
@@ -440,8 +440,9 @@ void CACHE::handle_read()
                     if (PROCESSED.occupancy < PROCESSED.SIZE)
                         PROCESSED.add_queue(&RQ.entry[index]);
                 }
-                else if (cache_type == IS_STLB)
+                else if (cache_type == IS_STLB) {
                     RQ.entry[index].data = block[set][way].data;
+				}
                 else if (cache_type == IS_L1I) {
                     if (PROCESSED.occupancy < PROCESSED.SIZE)
                         PROCESSED.add_queue(&RQ.entry[index]);
@@ -486,7 +487,7 @@ void CACHE::handle_read()
                 // update prefetch stats and reset prefetch bit
                 if (block[set][way].prefetch) {
                     // TODO: ? l2c_notify_useful(block[set][way].full_addr, RQ.entry[index].ip);
-                    pf_useful++;
+					pf_useful++;
                     block[set][way].prefetch = 0;
                 }
                 block[set][way].used = 1;
@@ -831,8 +832,9 @@ void CACHE::fill_cache(uint32_t set, uint32_t way, PACKET *packet)
             assert(0);
     }
 #endif
-    if (block[set][way].prefetch && (block[set][way].used == 0))
+    if (block[set][way].prefetch && (block[set][way].used == 0)) {
         pf_useless++;
+	}
 
     if (block[set][way].valid == 0)
         block[set][way].valid = 1;
@@ -865,11 +867,6 @@ int CACHE::check_hit(PACKET *packet)
 {
     uint32_t set = get_set(packet->address);
     int match_way = -1;
-	
-	/*if (cache_type == IS_DTLB || cache_type == IS_STLB) {
-		uint64_t page_addr = (packet->address >> LOG2_PAGE_SIZE) << LOG2_PAGE_SIZE;
-		cout << "page addr:" << (packet->address & page_mask) << endl;
-	}*/
 
     if (NUM_SET < set) {
         cerr << "[" << NAME << "_ERROR] " << __func__ << " invalid set index: " << set << " NUM_SET: " << NUM_SET;

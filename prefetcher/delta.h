@@ -8,22 +8,22 @@
 #include "champsim.h"
 
 typedef struct predicted_distance {
-	uint64_t distance;
+	int64_t distance;
 	uint64_t lru;
 
 	predicted_distance(uint64_t d) : distance(d), lru(0){}
 }p_distance;
 
 class Delta {
-	// TODO: the predicted values are supposed to be managed with LRU
-	uint64_t S;
-	std::unordered_map<uint64_t, std::vector<p_distance*> > d_table;
-	uint64_t last_accessed_page;
-	uint64_t previous_distance;
-	uint64_t current_distance;
-	uint64_t current_page;
-
 	private:
+		// TODO the predicted values are supposed to be managed with LRU
+		uint64_t S;
+		std::unordered_map<uint64_t, std::vector<p_distance*> > d_table;
+		uint64_t last_accessed_page;
+		uint64_t previous_distance;
+		int64_t current_distance;
+		uint64_t current_page;
+
 		uint64_t get_page_addr(uint64_t full_addr) {
 			uint64_t page = (full_addr >> LOG2_PAGE_SIZE) << LOG2_PAGE_SIZE;
 			return page;
@@ -32,7 +32,7 @@ class Delta {
 		void set_current_values(uint64_t full_addr) {
 			uint64_t page = get_page_addr(full_addr);
 			current_page = page;
-			current_distance = (page - last_accessed_page);
+			current_distance = (int64_t) (page - last_accessed_page);
 		}
 
         // Helper method to see if the distance already exists in the delta table
@@ -125,14 +125,14 @@ class Delta {
 
 		std::vector<uint64_t> find_prefetch_addrs(uint64_t full_addr) {
 			set_current_values(full_addr);
-
 			std::vector<p_distance*> predicted = d_table[current_distance];
 
 			update_prev_predicted_distances();
+			
+			std::vector<uint64_t> result_addrs = distances_to_addresses(predicted);
 			update_previous_values();
-
 			// turn a vector of structs into a vector of addresses
-			return distances_to_addresses(predicted);
+			return result_addrs;
 		}
 };
 

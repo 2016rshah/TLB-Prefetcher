@@ -1,0 +1,56 @@
+#include "cache.h"
+#include "champsim.h"
+#include "block.h"
+
+PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
+   PACKET pf_packet;
+   pf_packet.fill_level = FILL_L2;
+   pf_packet.cpu = cpu;
+   pf_packet.address = pf_addr >> LOG2_PAGE_SIZE; // this gets rid of the lower 0s
+   pf_packet.full_addr = pf_addr;
+   pf_packet.ip = 0; // prefetch gets dummy ip of zero
+   pf_packet.type = PREFETCH;
+   pf_packet.event_cycle = current_core_cycle[cpu]; 
+   return pf_packet;
+}
+
+void CACHE::tlb_prefetcher_initialize() 
+{
+
+}
+
+
+void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type)
+{
+	// addr is a full addr
+	printf("Trigger address: %lx\n", addr);
+	uint64_t pf_addr = ((addr>>LOG2_PAGE_SIZE)+1) << LOG2_PAGE_SIZE;
+	PACKET packet = make_packet(cpu, pf_addr);
+	printf("predicted: %lx\n", packet.full_addr);
+	uint32_t set = get_set(packet.address);
+	int way = check_hit(&packet); 
+	
+	if (way != -1) {
+		return;
+	}
+	
+	uint64_t pa = va_to_pa(cpu, 0, packet.full_addr, packet.address, 1);	
+	packet.data = pa >> LOG2_PAGE_SIZE;
+	
+	way = find_victim(cpu, 0, set, block[set], 0, packet.full_addr, PREFETCH);
+	pf_issued++;
+	
+	fill_cache(set, way, &packet);
+	
+	// ? update_replacement_state(cpu, set, way, packet.full_addr, 0, block[set][way].full_addr,PREFETCH, 0);	
+}
+
+void CACHE::tlb_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr)
+{
+
+}
+
+void CACHE::tlb_prefetcher_final_stats()
+{
+
+}
