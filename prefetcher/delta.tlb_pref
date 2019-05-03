@@ -33,6 +33,9 @@ void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uin
 	std::vector<uint64_t> predicted = delta.find_prefetch_addrs(addr);
 	uint64_t instr_id = 0; // set instruction id to zero because only used for debugging
 	for (uint64_t prediction : predicted) {
+      if (prediction == 0) {
+        continue;
+      }
 	  PACKET packet = make_packet(cpu, prediction);
 	  uint32_t set = get_set(packet.address);
 	  int way = check_hit(&packet);
