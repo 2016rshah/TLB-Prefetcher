@@ -9,7 +9,7 @@
 #include "champsim.h"
 
 typedef struct address_freq {
-	int64_t address;
+	uint64_t address;
 	uint64_t lru;
 
 	address_freq(uint64_t d) : address(d), lru(0){}
@@ -117,6 +117,7 @@ class GAC {
 		std::vector<uint64_t> find_prefetch_addrs(uint64_t full_addr) {
 			set_current_values(full_addr);
 			std::vector<addr_freq*> predicted = corr_map[current_page];
+			
 			update_prev_correlation();
 			
 			std::vector<uint64_t> result_addrs = freq_to_addresses(predicted);

@@ -39,14 +39,15 @@ void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uin
 	  PACKET packet = make_packet(cpu, prediction);
 	  uint32_t set = get_set(packet.address);
 	  int way = check_hit(&packet);
+
       total_prefetches++; 
 	 	// TODO: handle overflow for counters 
-	  if(way != -1) {
+	  if(way != -1 ) {
 		num_redundant++; 
 	    continue; // redundant prefetches, we can look further in the stream if there are too many redundant prefetches
 	  }
 	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address, 1); // ?
-		packet.data = pa >> LOG2_PAGE_SIZE; // gets rid of the lower 0s  
+      packet.data = pa >> LOG2_PAGE_SIZE; // gets rid of the lower 0s  
 
 	  way = find_victim(cpu, instr_id, set, block[set], 0, packet.full_addr, PREFETCH);
 	  
@@ -64,6 +65,6 @@ void CACHE::tlb_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way,
 void CACHE::tlb_prefetcher_final_stats()
 {
 	printf("\nTLB prefetcher final stats\n");
-	printf("\tredundant prefetches vs total calculated:\n");
+	printf("\tredundant prefetches vs total calculated:");
 	printf("\t%ld of %ld\n", num_redundant, total_prefetches); 	
 }
