@@ -8,7 +8,7 @@ print('----------------------------------------')
 prefetcher = input("Enter prefetcher: ")
 print('\n')
 champ_path = os.chdir("..") 
-suites = ["gap-g15", "gap-g17", "gap-g20"] #, "gap-g22"]
+suites = ["gap-g15", "gap-g17", "gap-g20", "gap-g22"]
 
 for suite in suites:
 

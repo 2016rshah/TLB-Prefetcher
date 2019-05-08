@@ -21,19 +21,15 @@ for trace in trace_list:
 		if line.startswith('Finished CPU 0 instructions:'):
 			ipc_rate = float(line.split()[9])
 			results[0] = bench_name +', 0, ' + str(ipc_rate)
-			# print('%s, 0, %.6f' % (bench_name, ipc_rate))
 		elif line.startswith('Finished CPU 1 instructions:'):
 			ipc_rate = float(line.split()[9])
 			results[1] = bench_name + ', 1, ' + str(ipc_rate)
-			#print('%s, 1, %.6f' % (bench_name, ipc_rate))
 		elif line.startswith('Finished CPU 2 instructions:'):
 			ipc_rate = float(line.split()[9])
 			results[2] = bench_name + ', 2, ' + str(ipc_rate)
-			#print('%s, 2, %.6f' % (bench_name, ipc_rate))
 		elif line.startswith('Finished CPU 3 instructions:'):
 			ipc_rate = float(line.split()[9])
 			results[3] = bench_name + ', 3, ' + str(ipc_rate)
-			# print('%s, 3, %.6f' % (bench_name, ipc_rate))
 		elif line.startswith('STLB PREFETCH  REQUESTED:'):
 			issued = float(line.split()[5])
 			useful = float(line.split()[9])

@@ -23,6 +23,7 @@ class Delta {
 		uint64_t previous_distance;
 		int64_t current_distance;
 		uint64_t current_page;
+		int64_t max_distance = (256 << LOG2_PAGE_SIZE);
 
 		uint64_t get_page_addr(uint64_t full_addr) {
 			uint64_t page = (full_addr >> LOG2_PAGE_SIZE) << LOG2_PAGE_SIZE;
@@ -71,7 +72,7 @@ class Delta {
 
 
 		void update_prev_predicted_distances() {
-			if (current_distance == 0) {
+			if (current_distance == 0 || current_distance >= max_distance) {
 				return; // if the page address matches, ignore
 			}
 			uint64_t size = d_table[previous_distance].size();
@@ -108,7 +109,11 @@ class Delta {
 			}
 			std::vector<uint64_t> addrs;
 			for (int i = 0; i < size; i++) {
-				addrs.push_back(current_page + (distances[i]->distance));
+				int64_t calc_distance = (distances[i]->distance);
+				uint64_t positive_dist = calc_distance < 0 ? (uint64_t) (calc_distance * -1) : (uint64_t) calc_distance;
+				uint64_t result = calc_distance < 0 ? current_page - positive_dist : current_page + positive_dist;
+				addrs.push_back(result);
+				
 			}
 			return addrs;
 		}
@@ -120,7 +125,13 @@ class Delta {
 			current_distance(0),
 			current_page(0) {}
 
-		~Delta(){}
+		~Delta(){ 
+			for (const auto &pair : d_table) {
+				for (uint64_t i = 0; i < pair.second.size(); i++) {
+					delete pair.second[i];
+				}
+			} 
+		}
 
 
 		std::vector<uint64_t> find_prefetch_addrs(uint64_t full_addr) {
