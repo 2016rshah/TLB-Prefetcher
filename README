@@ -1,42 +1,40 @@
 ChampSim Workflow
 -----------------
-Once you've finished coding a replacement policy, you will build it. Building your replacement
-policy produces an executable which can be run. Editing your replacement policy will require
-you to build again. Once you have an executable for your policy, you can run it. Running it will
-produce some output which you can analyze.
 
-Building Your Replacement Policy
+Building Your TLB Prefetcher Policy
 --------------------------------
-To build a replacement policy, use the following command,
+To build a policy, use the following command,
 
-$./build.sh my_policy
+$./build.sh my_policy num_cores
 
-where my_policy is a replacement policy (replacement/my_policy.llc_repl).
+where my_policy is a tlb_prefetcher policy (prefetcher/my_policy.tlb_pref).
 
-You only have to build your policy after you edit its source code.
+For correlation based policies (ie Delta and GAC), you can use the following command,
 
-Running Your Replacement Policy
+$bash build_correlation.sh my_policy num_cores S stream_index
+
+where S is the number of slots per TLB prefetcher entry and stream index is the distance into a stream that the prefetcher should predict.
+
+Running Your TLB Prefetcher Policy
 -------------------------------
-There are two ways to run your replacement policy, run.sh and run_cluster.sh.
-
 run.sh will simulate a small amount of instructions locally, and should only be used for testing
-purposes, not for the results you report. Output files will be produced in output/.
-
-run_cluster.sh will simulate your policy on a larger amount of instructions (100 million) on the
-department cluster, meaning it will be much faster than simulating on your local machine.
-Output files will be produced in a subdirectory of output/ so that you can avoid overwriting
-output files of other policies.
-
-Both scripts have similar usages:
+purposes, not for the results you report. Output files will be produced in output/. Make sure that the targeted traces exist on your machine in the traces/ folder.
 
 $./run.sh my_policy
-$./run_cluster.sh my_policy
+
+run_cluster.sh will run SPEC benchmarks on a cluster. Make sure you're logged into that cluster before running this command. 
+$./run_cluster.sh my_policy 
+
+scripts/run_gap.sh will run GAP benchmarks on a cluster for gap 15, 17, 20, and 22.
+$ cd scripts
+$ ./run_gap.sh my_policy
+
+scripts/run_cloudsuite.sh will run cloudsuite benchmarks on a cluster
+$ cd scripts
+$ ./run_cloudsuite.sh my_policy
 
 Using the Cluster
 -----------------
-After submitting jobs to the cluster using ./run_cluster.sh, you may want to check up on your
-jobs, or even remove them if you think something may be broken.
-
 To check your jobs use the following command,
 
 $/lusr/opt/condor/bin/condor_q
@@ -49,48 +47,21 @@ $/lusr/opt/condor/bin/condor_rm job_number
 
 Printing Results
 ----------------
-You can analyze the results by yourself if you like, or use the given script,
+To print out gap results,
 
-$./print_results.py my_policy
+$ cd scripts
+$ ./print_gap_results.py 
 
-which will print MPKI and IPC for the given policy.
+enter the target prefetcher policy when prompted
 
-Tips
-----
-You must be logged into the streetpizza UTCS lab machine in order to submit your code to the 
-cluster to run (ssh utcsid@streetpizza.cs.utexas.edu). Disclaimer: you should avoid submitting 
-useless or bugged code to the cluster, as it is a public resource. In order to test your code 
-before submitting it, you should use the run.sh script.
+To print out cloudsuite results,
 
-If your text editor of choice doesn't seem to recognize the .llc_repl files as C++ code,
-you can change your settings to use C++ syntax.
-    For vim, you need to add this line to you .vimrc file:
-        au BufNewFile,BufReadPost *.llc_repl set syntax=cpp
+$ cd scripts
+$ ./print_cloudsuite_results.py 
 
-The base code for simulating OPT already opens the file containing all cache references for you.
-The variable "trace_file" will let you read the file easily whenever you need to.
+enter the target prefetcher policy when prompted
 
-To read the next full address in the file, this code snippet will be helpful:
-    uint64_t address;
-    trace_file >> address;
-
-When comparing addresses, make sure you are using the block address, not the full address.
-If you don't know the difference, feel free to post on Piazza or look it up online.
-
-inc/cache.h contains some helpful constants that you should use in your code.
-inc/block.h contains the BLOCK struct, which will be useful in completing llc_find_victim().
-
-Each cache access in trace_file corresponds to a call to llc_update_replacement.
-
-TLB Prefetching
---------------------
-
-Install info gain library for analyzing different localizations,
-
-	python3 -m pip install --user info_gain
-
-see library information at: https://pypi.org/project/info-gain/
-
-
+Ideal TLB
+---------
 To model the absolute upper bound for a TLB prefetcher,
 change the PAGE_TABLE_LATENCY to 0 in src/main.cc 
