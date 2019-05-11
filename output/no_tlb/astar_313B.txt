@@ -1,0 +1,76 @@
+
+*** ChampSim Multicore Out-of-Order Simulator ***
+
+Warmup Instructions: 0
+Simulation Instructions: 100000000
+Number of CPUs: 1
+LLC sets: 2048
+LLC ways: 16
+Off-chip DRAM Size: 4096 MB Channels: 1 Width: 64-bit Data Rate: 1600 MT/s
+
+CPU 0 runs /scratch/cluster/akanksha/CRCRealTraces/astar_313B.trace.gz
+
+Warmup complete CPU 0 instructions: 1 cycles: 15 (Simulation time: 0 hr 0 min 0 sec) 
+
+Finished CPU 0 instructions: 100000000 cycles: 875048225 cumulative IPC: 0.114279 (Simulation time: 0 hr 11 min 35 sec) 
+
+CPU 0 Branch Prediction Accuracy: 88.3095% MPKI: 16.2142
+
+ChampSim completed all CPUs
+
+Region of Interest Statistics
+
+CPU 0 cumulative IPC: 0.114279 instructions: 100000000 cycles: 875048225
+L1D TOTAL     ACCESS:   39488149  HIT:   33284619  MISS:    6203530
+L1D LOAD      ACCESS:   29254825  HIT:   25173495  MISS:    4081330
+L1D RFO       ACCESS:   10233324  HIT:    8111124  MISS:    2122200
+L1D PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
+L1D WRITEBACK ACCESS:          0  HIT:          0  MISS:          0
+L1D PREFETCH  REQUESTED:          0  ISSUED:          0  FILLED:          0  USEFUL:          0  USELESS:          0
+  ACCURACY:       -nan
+L1I TOTAL     ACCESS:   21388953  HIT:   21388880  MISS:         73
+L1I LOAD      ACCESS:   21388953  HIT:   21388880  MISS:         73
+L1I RFO       ACCESS:          0  HIT:          0  MISS:          0
+L1I PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
+L1I WRITEBACK ACCESS:          0  HIT:          0  MISS:          0
+L1I PREFETCH  REQUESTED:          0  ISSUED:          0  FILLED:          0  USEFUL:          0  USELESS:          0
+  ACCURACY:       -nan
+L2C TOTAL     ACCESS:    9247093  HIT:    4819603  MISS:    4427490
+L2C LOAD      ACCESS:    4081398  HIT:    1666856  MISS:    2414542
+L2C RFO       ACCESS:    2122200  HIT:     109417  MISS:    2012783
+L2C PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
+L2C WRITEBACK ACCESS:    3043495  HIT:    3043330  MISS:        165
+L2C PREFETCH  REQUESTED:          0  ISSUED:          0  FILLED:          0  USEFUL:          0  USELESS:          0
+  ACCURACY:       -nan
+LLC TOTAL     ACCESS:    7354913  HIT:    3132979  MISS:    4221934
+LLC LOAD      ACCESS:    2414542  HIT:      91181  MISS:    2323361
+LLC RFO       ACCESS:    2012782  HIT:     116219  MISS:    1896563
+LLC PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
+LLC WRITEBACK ACCESS:    2927589  HIT:    2925579  MISS:       2010
+LLC PREFETCH  REQUESTED:          0  ISSUED:          0  FILLED:          0  USEFUL:          0  USELESS:          0
+  ACCURACY:       -nan
+DTLB TOTAL     ACCESS:   36898165  HIT:   32990815  MISS:    3907350
+DTLB LOAD      ACCESS:   28134940  HIT:   25484682  MISS:    2650258
+DTLB RFO       ACCESS:    8763225  HIT:    7506133  MISS:    1257092
+DTLB PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
+DTLB WRITEBACK ACCESS:          0  HIT:          0  MISS:          0
+DTLB PREFETCH  REQUESTED:          0  ISSUED:          0  FILLED:          0  USEFUL:          0  USELESS:          0
+  ACCURACY:       -nan
+STLB TOTAL     ACCESS:    3907359  HIT:    1881193  MISS:    2026166
+STLB LOAD      ACCESS:    2650267  HIT:    1768178  MISS:     882089
+STLB RFO       ACCESS:    1257092  HIT:     113015  MISS:    1144077
+STLB PREFETCH  ACCESS:          0  HIT:          0  MISS:          0
+STLB WRITEBACK ACCESS:          0  HIT:          0  MISS:          0
+STLB PREFETCH  REQUESTED:          0  ISSUED:          0  FILLED:          0  USEFUL:          0  USELESS:          0
+  ACCURACY:       -nan
+Major fault: 0 Minor fault: 29882
+
+DRAM Statistics
+ CHANNEL 0
+ RQ ROW_BUFFER_HIT:     667382  ROW_BUFFER_MISS:    3552127
+ DBUS_CONGESTED:    3685168
+ WQ ROW_BUFFER_HIT:     500928  ROW_BUFFER_MISS:    2261458  FULL:          0
+
+ AVG_CONGESTED_CYCLE: 14
+
+gzip: stdout: Broken pipe

@@ -40,4 +40,4 @@ do
     
     # submit the condor file
     /lusr/opt/condor/bin/condor_submit $CONDOR_FILE
-done < $CHAMP_PATH/sim_lists/spec/traces.txt
+done < $CHAMP_PATH/sim_lists/spec/comp_traces.txt
