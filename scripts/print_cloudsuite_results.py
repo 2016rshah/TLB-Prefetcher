@@ -9,6 +9,7 @@ prefetcher = input("Enter prefetcher: ")
 
 champ_path = os.chdir("..") 
 i = int(0)
+cpus = [0,1,2,3]
 
 trace_list = open('sim_lists/cloudsuite/4core_workloads.txt', 'r')
 for trace in trace_list:
@@ -33,9 +34,13 @@ for trace in trace_list:
 		elif line.startswith('STLB PREFETCH  REQUESTED:'):
 			issued = float(line.split()[5])
 			useful = float(line.split()[9])
-			accuracy = float(useful/issued) * 100
-			results[cpu] = results[cpu] + ', ' + str(accuracy)
+			if issued != 0 and useful != 0:
+				accuracy = float(useful/issued) * 100
+				results[cpu] = results[cpu] + ', ' + str(accuracy)
+			else:
+				results[cpu] = results[cpu] + ', 0.0'
 			cpu += 1
 	
-	for key, value in results.items():
-		print(value)	
+	for i in cpus:
+		print(results[i])
+  

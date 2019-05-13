@@ -24,7 +24,6 @@ cd $CHAMP_PATH
 WARM_INS=0
 INS=100
 
-#OUTPUT_DIR="/scratch/cluster/kbaldauf/output/$SIGNATURE/${TLB_PREFETCHER}"
 OUTPUT_DIR="${CHAMP_PATH}/output/$SIGNATURE/${TLB_PREFETCHER}"
 
 # ensure output dir exists
