@@ -43,7 +43,7 @@ void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uin
 	// ? update_replacement_state(cpu, set, way, packet.full_addr, 0, block[set][way].full_addr,PREFETCH, 0);	
 }
 
-void CACHE::tlb_prefetcher_cache_fill(uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr)
+void CACHE::tlb_prefetcher_cache_fill(uint32_t cpu, uint64_t addr, uint32_t set, uint32_t way, uint8_t prefetch, uint64_t evicted_addr)
 {
 
 }

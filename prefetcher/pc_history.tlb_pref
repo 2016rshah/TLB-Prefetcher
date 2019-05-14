@@ -1,12 +1,11 @@
 #include "cache.h"
-#include "delta.h"
+#include "pc_history.h"
 #include "champsim.h"
 #include "block.h"
 #include <vector>
 
 uint64_t S = 2;
-uint64_t stream_start = 1; 
-Delta delta(S);
+PC_HISTORY pc_history(S);
 
 uint64_t num_redundant = 0;
 uint64_t total_prefetches = 0;
@@ -31,29 +30,33 @@ PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
 // this is the trigger for a prefetcher
 void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type)
 {
-	std::vector<uint64_t> predicted = delta.find_prefetch_addrs(addr);
-	uint64_t instr_id = 0; // set instruction id to zero because only used for debugging
+	if (cache_hit) {
+		return; // only handle miss stream
+	}
+	std::vector<uint64_t> predicted = pc_history.find_prefetch_addrs(addr, ip);
+	uint64_t instr_id = 0; 
+	
 	for (uint64_t prediction : predicted) {
-      if (prediction <= 0) {
-        continue;
-      }
-	  PACKET packet = make_packet(cpu, prediction);
-	  uint32_t set = get_set(packet.address);
-	  int way = check_hit(&packet);
-
-      total_prefetches += 1;
-		// TODO: handle overflow for counters 
-	  if(way != -1 ) {
-	    num_redundant += 1;
-		continue; // redundant prefetches, we can look further in the stream if there are too many redundant prefetches
-	  }
-	  uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address, 1); // ?
-      packet.data = pa >> LOG2_PAGE_SIZE; // gets rid of the lower 0s  
-
-	  way = find_victim(cpu, instr_id, set, block[set], 0, packet.full_addr, PREFETCH);
+		if (prediction <= 0) {
+			continue;
+		}
 	  
-      pf_issued++; // TODO: update pf_requested if we end up using a prefetch queue
-      fill_cache(set, way, &packet);
+		PACKET packet = make_packet(cpu, prediction);
+		uint32_t set = get_set(packet.address);
+		int way = check_hit(&packet);
+		total_prefetches++; 
+	  
+		if(way != -1) {
+			num_redundant++; 
+			continue; 
+		}
+		uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address, 1); 
+		packet.data = pa >> LOG2_PAGE_SIZE;  
+
+		way = find_victim(cpu, instr_id, set, block[set], 0, packet.full_addr, PREFETCH);
+	  
+		pf_issued++; 
+		fill_cache(set, way, &packet);
 	}
 }
 
