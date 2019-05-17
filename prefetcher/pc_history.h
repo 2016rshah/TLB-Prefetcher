@@ -49,10 +49,10 @@ class correlation_state {
 			history.push(current_offset);
 		}
 		
-		int find_delta_in_prev() {
+		int find_delta_in_prev(int64_t curr_delta) {
 			int size = correlation[history].size();
 			for (int i = 0; i < size; i++) {
-				if (correlation[history][i]->delta == current_delta) {
+				if (correlation[history][i]->delta == curr_delta) {
 					return i;
 				}
 			}
@@ -65,6 +65,15 @@ class correlation_state {
 				correlation[history][i]->lru++;
 			}
 			correlation[history][index]->lru = 0;
+		}
+
+		void lru_deupdate(int index) {
+			int max = correlation[history].size();
+			for(int i = 0; i < max; i++) {
+				if ((correlation[history][i]->lru) > (correlation[history][index]->lru)) {
+					correlation[history][i]->lru--;
+				}
+			}
 		}
 
 		// only call when lru is full
@@ -85,7 +94,7 @@ class correlation_state {
 				return; // if the page address matches, ignore
 			}
 			uint64_t size = correlation[history].size();
-			int exists_index = find_delta_in_prev();
+			int exists_index = find_delta_in_prev(current_delta);
 
 			if (exists_index != -1) {
 				// distance already present in previous predicted, just update
@@ -128,10 +137,20 @@ class correlation_state {
 
 		~correlation_state(){}
 
-
+		void remove_redundancy(uint64_t full_addr, uint64_t predicted_addr) {
+		  uint64_t full_page_addr = get_page_addr(full_addr);
+		  uint64_t predicted_page_addr = get_page_addr(predicted_addr);
+		  int64_t delta = predicted_page_addr - full_page_addr;
+		  int exists = find_delta_in_prev(delta);
+		  if(exists != -1) {
+			lru_deupdate(exists);
+		    correlation[history].erase(correlation[history].begin() + exists);
+		  }
+		}
+		
 		std::vector<uint64_t> find_prefetch_addrs(uint64_t full_addr) {
 			set_current_values(full_addr);
-			if (history.size() < 5) {
+			if (history.size() < 8) {
 				history.push(current_offset);
 				return{};
 			}
@@ -154,6 +173,10 @@ class PC_HISTORY {
 
 		~PC_HISTORY(){}
 
+		void remove_redundancy(uint64_t full_addr, uint64_t predicted_addr, uint64_t ip) {
+		  pc_corr_map[ip]->remove_redundancy(full_addr, predicted_addr);
+		}
+		
 		std::vector<uint64_t> find_prefetch_addrs(uint64_t addr, uint64_t ip) {
 			if (ip == 0) {
 				// dummy ip

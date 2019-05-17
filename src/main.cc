@@ -798,8 +798,11 @@ int main(int argc, char** argv)
             }
 
             // check for deadlock
-            if (ooo_cpu[i].ROB.entry[ooo_cpu[i].ROB.head].ip && (ooo_cpu[i].ROB.entry[ooo_cpu[i].ROB.head].event_cycle + DEADLOCK_CYCLE) <= current_core_cycle[i])
-                print_deadlock(i);
+            if (ooo_cpu[i].ROB.entry[ooo_cpu[i].ROB.head].ip && (ooo_cpu[i].ROB.entry[ooo_cpu[i].ROB.head].event_cycle + DEADLOCK_CYCLE) <= current_core_cycle[i]) {
+                printf("Deadlock condition 1: %d\n", ooo_cpu[i].ROB.entry[ooo_cpu[i].ROB.head].ip);
+				printf("Deadlock condition 2: %d\n", (ooo_cpu[i].ROB.entry[ooo_cpu[i].ROB.head].event_cycle +DEADLOCK_CYCLE) <= current_core_cycle[i]);
+				print_deadlock(i);
+			}
 
             // check for warmup
             // warmup complete

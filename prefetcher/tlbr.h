@@ -1,7 +1,7 @@
 #ifndef __TLBR_H__
 #define __TLBR_H__
 
-#include <bits/stdc++.h> 
+#include <bitset> 
 #include <iostream>
 #include <unordered_map>
 #include <vector>
@@ -25,7 +25,7 @@ footprint_correlation(footprint* f, uint64_t p) : fp(f), corr_page(p){}
 class Metadata {
  private:
     uint64_t maturity_threshold;
-    uint64_t similarity_threshold;
+    uint64_t similarity_threshold; //TODO: update this name to difference threshold
     uint64_t fuzzing_threshold;
     
     std::map< uint64_t, std::vector< footprint_correlation* > > metadata;
@@ -43,7 +43,7 @@ class Metadata {
     };
 
 
-	int get_similarity(footprint* fp1, footprint* fp2) {
+	int get_difference(footprint* fp1, footprint* fp2) {
 		uint64_t fp1_integer;
 		uint64_t fp2_integer;
 		try {
@@ -52,7 +52,6 @@ class Metadata {
 		} catch (std::overflow_error& e) {
 			assert("Overflow of tlbr chunking bitset");
 		} 
-		
 		uint64_t xord = (fp1_integer ^ fp2_integer);
 		std::bitset<FOOTPRINT_SIZE> xord_bitset (xord);
 		return xord_bitset.count();
@@ -60,36 +59,42 @@ class Metadata {
 
     void update_metadata(footprint* fp_snapshot) {
 		std::vector< footprint_correlation* > fpcs = metadata[prev_page];
-		int max_index = 0;
-		uint64_t max_similarity = 0;
+		int min_index = 0;
+		uint64_t min_difference = UINT_MAX;
 
 		for(uint64_t i = 0; i < fpcs.size(); i++) {
 	    	footprint_correlation* fpc = fpcs[i];
-	    	uint64_t similarity = get_similarity(fpc->fp, fp_snapshot);
-	    	if(similarity > max_similarity) {
-				max_similarity = similarity;
-				max_index = i;
+	    	uint64_t difference = get_difference(fpc->fp, fp_snapshot);
+	    	if(difference < min_difference) {
+				min_difference = difference;
+				min_index = i;
 	    	}
 		}
-		if(max_similarity >= fuzzing_threshold && fpcs.size() != 0) {
-	    	metadata[prev_page][max_index]->corr_page = curr_page;
+		if(min_difference < fuzzing_threshold && fpcs.size() != 0) {
+	    	metadata[prev_page][min_index]->corr_page = curr_page;
 		} else if (maturity(fp_snapshot) >= maturity_threshold){
 	    	footprint_correlation* fpc = new footprint_correlation(fp_snapshot, curr_page);
 	    	metadata[prev_page].push_back(fpc);
 		}
-
+		printf("update metadata\n");
     }
 	
     std::vector< uint64_t > get_correlations(footprint* fp_snapshot) {
 		std::vector< footprint_correlation* > fps = metadata[curr_page];
 		std::vector< uint64_t > results;
+		int min_index = 0;
+		uint64_t min_difference = UINT_MAX;
 		for(uint64_t i = 0; i < fps.size(); i++) {
 	    	footprint_correlation* fp = fps[i];
-	    	uint64_t similarity = get_similarity(fp->fp, fp_snapshot);
-	    	if(similarity >= similarity_threshold) {
-				results.push_back(fp->corr_page);
-	    	}
+	    	uint64_t difference = get_difference(fp->fp, fp_snapshot);
+			if (difference < min_difference) {
+				min_index = 1;
+				min_difference = difference;
+			}
 		}
+		if(fps.size() != 0 && fps[min_index] != NULL) {
+			results.push_back(fps[min_index]->corr_page);
+	    }
 		return results;
     };	
 
@@ -118,17 +123,11 @@ class Metadata {
 		uint64_t curr_offset = get_offset(addr);
 		// floor to nearest cache line
 		curr_offset = (curr_offset >> 6);
-		if (resident_footprints.count(curr_page) <= 0) {
+		if (resident_footprints.count(curr_page) == 0) {
 			resident_footprints[curr_page] = new footprint();
 		}
-		if (	resident_footprints[curr_page]->fp[curr_offset] == 1) {
-			// printf("Bit is already set\n");
-		} else {
-			// printf("Bit is not already set\n");
-			// printf("maturity: %d\n", maturity(resident_footprints[curr_page]));
-		}
 		resident_footprints[curr_page]->fp[curr_offset] = 1;
-		if (prev_page == 0 || curr_page == prev_page) {return;}
+		if (prev_page == 0) {return;}
 		footprint* fp_snapshot = resident_footprints[prev_page];
 		update_metadata(fp_snapshot);
     };
@@ -138,7 +137,7 @@ class Metadata {
 			resident_footprints[curr_page] = new footprint();
 		}
 		footprint* fp_snapshot = resident_footprints[curr_page];
-		
+					
 		if(maturity(fp_snapshot) < maturity_threshold) { return {}; }
 		return get_correlations(fp_snapshot);
     };
@@ -152,10 +151,11 @@ class Metadata {
 /* Translation Lookaside BuffeR */
 class TLBR {
 	private:
-		Metadata* pc_corr_map = new Metadata(2, 100, 5);
-
+		Metadata* pc_corr_map; 
 	public:
-		TLBR() {}
+		TLBR() {
+			pc_corr_map = new Metadata(0,5,5);
+		}
 
 		~TLBR(){}
 

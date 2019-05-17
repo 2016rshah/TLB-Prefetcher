@@ -4,7 +4,7 @@
 #include "block.h"
 #include <vector>
 
-uint64_t S = 2;
+uint64_t S = 4;
 PC_HISTORY pc_history(S);
 
 uint64_t num_redundant = 0;
@@ -30,9 +30,9 @@ PACKET make_packet(uint32_t cpu, uint64_t pf_addr) {
 // this is the trigger for a prefetcher
 void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uint8_t cache_hit, uint8_t type)
 {
-	if (cache_hit) {
+	/*if (cache_hit) {
 		return; // only handle miss stream
-	}
+	}*/
 	std::vector<uint64_t> predicted = pc_history.find_prefetch_addrs(addr, ip);
 	uint64_t instr_id = 0; 
 	
@@ -47,7 +47,8 @@ void CACHE::tlb_prefetcher_operate(uint32_t cpu, uint64_t addr, uint64_t ip, uin
 		total_prefetches++; 
 	  
 		if(way != -1) {
-			num_redundant++; 
+			num_redundant++;
+			pc_history.remove_redundancy(addr, prediction, ip);
 			continue; 
 		}
 		uint64_t pa = va_to_pa(cpu, instr_id, packet.full_addr, packet.address, 1); 

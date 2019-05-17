@@ -116,7 +116,7 @@ void CACHE::handle_fill()
 
 			// TODO: add if statement for tlb prefetching
 			if (cache_type == IS_STLB)
-				tlb_prefetcher_cache_fill(MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
+				tlb_prefetcher_cache_fill(fill_cpu, MSHR.entry[mshr_index].full_addr, set, way, (MSHR.entry[mshr_index].type == PREFETCH) ? 1 : 0, block[set][way].full_addr);
 
             // update replacement policy
             if (cache_type == IS_LLC) {
@@ -371,7 +371,7 @@ void CACHE::handle_writeback()
                         l2c_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
 					// TODO: do we check for dtlb and stlb?
 					else if (cache_type == IS_STLB)
-						tlb_prefetcher_cache_fill(WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
+						tlb_prefetcher_cache_fill(writeback_cpu, WQ.entry[index].full_addr, set, way, 0, block[set][way].full_addr);
 
                     // update replacement policy
                     if (cache_type == IS_LLC) {
